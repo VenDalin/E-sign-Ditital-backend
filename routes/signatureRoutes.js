@@ -8,6 +8,11 @@ const {
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+  req.io = req.app.get("socketio"); // Attach io to req
+  next();
+});
+
 router.post("/signatures", uploadSignature); // Changed from /upload to /signatures
 router.get("/signatures", getAllSignatures);
 router.delete("/signatures/:id", deleteSignature);

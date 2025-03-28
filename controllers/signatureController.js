@@ -9,6 +9,11 @@ exports.uploadSignature = async (req, res) => {
     const newSignature = new Signature({ signature });
     await newSignature.save();
 
+    // Emit a Socket.IO event to all connected clients
+    if (req.io) {
+      req.io.emit("signatureAdded", newSignature);
+    }
+
     res.json({ message: "Signature saved successfully!" });
   } catch (error) {
     console.error("Error uploading signature:", error);
@@ -36,6 +41,11 @@ exports.deleteSignature = async (req, res) => {
     const signature = await Signature.findByIdAndDelete(id);
     if (!signature) return res.status(404).json({ error: "Signature not found" });
 
+    // Emit a Socket.IO event to all connected clients
+    if (req.io) {
+      req.io.emit("signatureDeleted", id);
+    }
+
     res.json({ message: "Signature deleted successfully!" });
   } catch (error) {
     console.error("Error deleting signature:", error);
@@ -59,6 +69,11 @@ exports.updateSignature = async (req, res) => {
     );
 
     if (!updatedSignature) return res.status(404).json({ error: "Signature not found" });
+
+    // Emit a Socket.IO event to all connected clients
+    if (req.io) {
+      req.io.emit("signatureUpdated", updatedSignature);
+    }
 
     res.json({ message: "Signature updated successfully!", signature: updatedSignature });
   } catch (error) {
