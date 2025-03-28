@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
 
 app.get("/", (req, res) => {
-  res.send("Backend server is running!");
+  res.json({status: 200, message: "Backend is running..."});
 });
 
 // Connect to MongoDB
@@ -20,6 +20,10 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use("/api", signatureRoutes);
+
+app.get("/health", (req, res) => {
+  res.json({status: 200, message: "Api is running..."});
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
